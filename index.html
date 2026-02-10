@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Violet Reset</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<style>
+    /* RESET */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: radial-gradient(circle at top, #1a002b, #05000a);
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    div {
+        height: 98vh;
+        width: 98vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    button {
+        width: 50%;
+        height: 50%;
+        background: transparent;
+        border: 3px solid #b300ff;
+        color: #e6b3ff;
+        font-size: 3rem;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        cursor: pointer;
+
+        /* Neon glow */
+        box-shadow:
+            0 0 10px #b300ff,
+            0 0 30px #b300ff,
+            inset 0 0 20px rgba(179, 0, 255, 0.6);
+
+        transition: all 0.3s ease;
+    }
+
+    button:hover {
+        color: #ffffff;
+        border-color: #ff4dff;
+        box-shadow:
+            0 0 15px #ff4dff,
+            0 0 40px #ff4dff,
+            0 0 80px #ff4dff,
+            inset 0 0 30px rgba(255, 77, 255, 0.7);
+
+        transform: scale(1.03);
+    }
+
+    button:active {
+        transform: scale(0.97);
+        box-shadow:
+            0 0 8px #b300ff,
+            inset 0 0 40px rgba(179, 0, 255, 0.9);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        button {
+            width: 80%;
+            height: 30%;
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<div>
+    <button>Reset</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/12.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.6.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore-compat.js"></script>
+
+<script>
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyDJmT4xJGZv1wQ4rXvVUeeC2WnaeEdpEcw",
+  authDomain: "project-a3273.firebaseapp.com",
+  projectId: "project-a3273",
+  storageBucket: "project-a3273.firebasestorage.app",
+  messagingSenderId: "492898448866",
+  appId: "1:492898448866:web:b41d68515f33e209c135bb"
+    };
+
+// Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+// Initialize Firebase Authentication and get a reference to the service
+    const auth = firebase.auth();
+
+// Initialize Cloud Firestore and get a reference to the service
+    const db = firebase.firestore();
+
+    console.log(firebase.app().name);  // "[DEFAULT]"
+
+</script>
+
+<script>
+    const resetBtn = document.querySelector("button");
+
+    resetBtn.addEventListener("click", async () => {
+        const confirmReset = confirm("⚠️ Bạn chắc chắn muốn XÓA TOÀN BỘ dữ liệu không?");
+        if (!confirmReset) return;
+
+        try {
+            const snapshot = await db.collection("Olympia").get();
+
+            if (snapshot.empty) {
+                alert("⚡ Collection trống rồi, không có gì để xóa.");
+                return;
+            }
+
+            const batch = db.batch();
+
+            snapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
+            });
+
+            await batch.commit();
+
+            alert("🔥 Reset thành công! Đã xóa toàn bộ dữ liệu.");
+            console.log("Deleted all documents in Olympia");
+
+        } catch (err) {
+            console.error("Reset failed:", err);
+            alert("❌ Có lỗi xảy ra khi reset!");
+        }
+    });
+</script>
+
+
+
+
+
+</body>
+</html>
